@@ -21,6 +21,8 @@ class Bot:
         self.first_column = self.create_column(0, 0, 0)
         self.second_column = self.create_column(1, 1, 1)
         self.third_column = self.create_column(2, 2, 2)
+        self.left_right_diagonal = self.create_column(0, 1, 2)
+        self.right_left_diagonal = self.create_column(2, 1, 0)
         self.corners = self.first_row[0], self.first_row[2], self.third_row[0], self.third_row[2]
         return self.game_board
 
@@ -83,6 +85,24 @@ class Bot:
         elif self.third_column.count(self.opponent) == 2 and self.third_column.count("_") == 1:
             x = self.third_column.index("_")
             print(x, 2)
+        elif self.left_right_diagonal.count(self.opponent) == 2 and self.left_right_diagonal.count("_") == 1:
+            x = self.left_right_diagonal.index("_")
+            if x == 0:
+                y = 0
+            if x == 1:
+                y = 1
+            if x == 2:
+                y = 2
+            print(x, y)
+        elif self.right_left_diagonal.count(self.opponent) == 2 and self.right_left_diagonal.count("_") == 1:
+            x = self.right_left_diagonal.index("_")
+            if x == 0:
+                y = 2
+            if x == 1:
+                y = 1
+            if x == 2:
+                y = 0
+            print(x, y)
         else:
             return False
 
@@ -105,6 +125,24 @@ class Bot:
         elif self.third_column.count(self.me) == 2 and self.third_column.count("_") == 1:
             x = self.third_column.index("_")
             print(x, 2)
+        elif self.left_right_diagonal.count(self.me) == 2 and self.left_right_diagonal.count("_") == 1:
+            x = self.left_right_diagonal.index("_")
+            if x == 0:
+                y = 0
+            if x == 1:
+                y = 1
+            if x == 2:
+                y = 2
+            print(x, y)
+        elif self.right_left_diagonal.count(self.opponent) == 2 and self.right_left_diagonal.count("_") == 1:
+            x = self.right_left_diagonal.index("_")
+            if x == 0:
+                y = 2
+            if x == 1:
+                y = 1
+            if x == 2:
+                y = 0
+            print(x, y)
         else:
             return False
 
