@@ -2,13 +2,6 @@
 
 import random
 
-team = input()
-first_row = input()
-second_row = input()
-third_row = input()
-
-board = [first_row, second_row, third_row]
-
 #first_row[0] = "A1" = (0 0)
 #first_row[1] = "B1" = (0 1)
 #first_row[2] = "C1" = (0 2)
@@ -27,27 +20,30 @@ board = [first_row, second_row, third_row]
 
 class Bot:
 
-    def board(self, x, y):
+    def board(self):
         self.me = input()
         if self.me == "X":
             self.opponent = "O"
         else:
             self.opponent = "X"
-        first_row = input()
-        second_row = input()
-        third_row = input()
-        self.board = self.create_board(first_row, second_row, third_row)
-        return self.board[x][y]
+        self.first_row = input()
+        self.second_row = input()
+        self.third_row = input()
+        self.game_board = self.create_board(self.first_row, self.second_row, self.third_row)
+        return self.game_board
 
     def create_board(self, first_row, second_row, third_row):
-        return [first_row, second_row, third_row]
+        return [self.first_row, self.second_row, self.third_row]
+
+    def make_original_move(self,x,y):
+        print("{} {}".format(x, y))
 
     def make_move(self):
         counter = 0
         while counter < 1:
             x = random.randint(0,2)
             y = random.randint(0,2)
-            z = self.board(x,y)
+            z = self.game_board[x][y]
             if z != "X" and z != "O":
                 print(("{} {}".format(x, y)))
                 counter = 1
@@ -55,6 +51,7 @@ class Bot:
                 counter = 0
 
 x = Bot()
+x.board()
 x.make_move()
 #can always be print function, or combine x and y
 # print(("{} {}".format(x, y)))
