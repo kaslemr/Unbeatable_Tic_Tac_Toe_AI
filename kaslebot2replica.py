@@ -46,26 +46,15 @@ class Bot:
                 counter = 1
             elif self.block_win() != False:
                 counter = 1
-            elif self.second_move() != False:
-                counter = 1
             else:
-                if self.corners.count("_") < 4:
-                    x = random.choice([0, 2])
-                    y = random.choice([0, 2])
-                    if z != "X" and z != "O":
-                        print(("{} {}".format(x, y)))
-                        counter = 1
-                    else:
-                        counter = 0
-                elif:
-                    x = random.randint(0,2)
-                    y = random.randint(0,2)
-                    z = self.game_board[x][y]
-                    if z != "X" and z != "O":
-                        print(("{} {}".format(x, y)))
-                        counter = 1
-                    else:
-                        counter = 0
+                x = random.randint(0,2)
+                y = random.randint(0,2)
+                z = self.game_board[x][y]
+                if z != "X" and z != "O":
+                    print(("{} {}".format(x, y)))
+                    counter = 1
+                else:
+                    counter = 0
 
     def first_move(self):
         if self.me not in self.first_row and self.me not in self.second_row and self.me not in self.third_row:
@@ -76,28 +65,6 @@ class Bot:
                     print(0,0)
             else:
                 print(0,0)
-        else:
-            return False
-
-    def second_move(self):
-        if self.positions_taken == 2:
-            if self.second_row[1] == self.opponent:
-                print(2,2)
-                counter = 1
-            else:
-                return False
-        elif self.positions_taken == 3:
-            if self.corners.count(self.opponent) == 2:
-                x = 1
-                y = random.choice([0, 2])
-                z = self.game_board[x][y]
-                if z != "X" and z != "O":
-                    print(("{} {}".format(x, y)))
-                    counter = 1
-                else:
-                    return False
-            else:
-                return False
         else:
             return False
 

@@ -29,6 +29,7 @@ class Bot:
         self.corners = self.first_row[0], self.first_row[2], self.third_row[0], self.third_row[2]
         self.positions = [item for sublist in self.game_board for item in sublist]
         self.positions_taken = self.positions.count("X") + self.positions.count("O")
+        self.middles = self.first_row[1], self.second_row[0], self.second_row[2], self.third_row[1]
         return self.game_board
 
     def create_board(self, first_row, second_row, third_row):
@@ -92,6 +93,29 @@ class Bot:
                     counter = 1
                 else:
                     counter = 0
+            elif self.middles.count(self.opponent) == 1:
+                if self.opponent in self.first_row[0]:
+                    if self.opponent in self.second_row[2]:
+                        print(0,2)
+                    if self.opponent in self.third_row[1]:
+                        print(2,0)
+                elif self.opponent in self.first_row[2]:
+                    if self.opponent in self.first_column[1]:
+                        print(0,0)
+                    if self.opponent in self.second_column[2]:
+                        print(2,2)
+                elif self.opponent in self.third_row[0]:
+                    if self.opponent in self.second_column[0]:
+                        print(0,0)
+                    if self.opponent in self.third_column[1]:
+                        print(2,2)
+                elif self.opponent in self.third_row[2]:
+                    if self.opponent in self.second_column[0]:
+                        print(0,2)
+                    if self.opponent in self.first_column[1]:
+                        print(2,0)
+                else:
+                    return False
             else:
                 return False
         else:
