@@ -1,8 +1,5 @@
-##USING THIS AS MAIN
-
-#1st python runner.py kaslebot2.py dummybot.py
-
-#2nd python runner.py dummybot.py kaslebot2.py
+#1st python runner.py kaslebot2replica.py kaslebot2.py
+#2nd python runner.py kaslebot2.py kaslebot2replica.py
 
 #1st python runner.py kaslebot2.py player
 #2nd python runner.py player kaslebot2.py
@@ -51,17 +48,24 @@ class Bot:
                 counter = 1
             elif self.second_move() != False:
                 counter = 1
-            elif self.corner_move()!= False:
-                counter = 1
             else:
-                x = random.randint(0,2)
-                y = random.randint(0,2)
-                z = self.game_board[x][y]
-                if z != "X" and z != "O":
-                    print(("{} {}".format(x, y)))
-                    counter = 1
-                else:
-                    counter = 0
+                if self.corners.count("_") < 4:
+                    x = random.choice([0, 2])
+                    y = random.choice([0, 2])
+                    if z != "X" and z != "O":
+                        print(("{} {}".format(x, y)))
+                        counter = 1
+                    else:
+                        counter = 0
+                elif:
+                    x = random.randint(0,2)
+                    y = random.randint(0,2)
+                    z = self.game_board[x][y]
+                    if z != "X" and z != "O":
+                        print(("{} {}".format(x, y)))
+                        counter = 1
+                    else:
+                        counter = 0
 
     def first_move(self):
         if self.me not in self.first_row and self.me not in self.second_row and self.me not in self.third_row:
@@ -91,25 +95,9 @@ class Bot:
                     print(("{} {}".format(x, y)))
                     counter = 1
                 else:
-                    counter = 0
+                    return False
             else:
                 return False
-        else:
-            return False
-
-    def corner_move(self):
-        if self.corners.count("_") < 4:
-            count = 0
-            while count < .05:
-                x = random.choice([0, 2])
-                y = random.choice([0, 2])
-                z = self.game_board[x][y]
-                if z != "X" and z != "O":
-                    print(("{} {}".format(x, y)))
-                    count = 1
-                    counter = 1
-                else:
-                    count = 0
         else:
             return False
 
