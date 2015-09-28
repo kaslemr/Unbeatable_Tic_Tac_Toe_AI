@@ -1,5 +1,5 @@
-#1st python runner.py kaslebot3.py dummybot.py
-#2nd python runner.py dummybot.py kaslebot3.py
+#1st python runner.py kaslebot3.py kaslebot2replica.py
+#2nd python runner.py dummybot.py kaslebot2.py
 
 #1st python runner.py kaslebot3.py player
 #2nd python runner.py player kaslebot3.py
@@ -24,6 +24,9 @@ class Bot:
         self.left_right_diagonal = self.create_column(0, 1, 2)
         self.right_left_diagonal = self.create_column(2, 1, 0)
         self.corners = self.first_row[0], self.first_row[2], self.third_row[0], self.third_row[2]
+        self.positions = [item for sublist in self.game_board for item in sublist]
+        self.positions_taken = self.positions.count("X") + self.positions.count("O")
+        self.middles = self.first_row[1], self.second_row[0], self.second_row[2], self.third_row[1]
         return self.game_board
 
     def create_board(self, first_row, second_row, third_row):
@@ -44,6 +47,12 @@ class Bot:
                 counter = 1
             elif self.block_win() != False:
                 counter = 1
+            elif self.second_move() != False:
+                counter = 1
+            elif self.third_move() != False:
+                counter = 1
+            elif self.corner_move()!= False:
+                counter = 1
             else:
                 x = random.randint(0,2)
                 y = random.randint(0,2)
@@ -63,6 +72,79 @@ class Bot:
                     print(0,0)
             else:
                 print(0,0)
+        else:
+            return False
+
+    def second_move(self):
+        if self.positions_taken == 2:
+            if self.second_row[1] == self.opponent:
+                x = random.random()
+                if x < 0.15:
+                    print(2,1)
+                    counter = 1
+                else:
+                    print(2,2)
+                    counter = 1
+            else:
+                return False
+        elif self.positions_taken == 3:
+            if self.corners.count(self.opponent) == 2:
+                x = 1
+                y = random.choice([0, 2])
+                z = self.game_board[x][y]
+                if z != "X" and z != "O":
+                    print(("{} {}".format(x, y)))
+                    counter = 1
+                else:
+                    counter = 0
+            elif self.middles.count(self.opponent) == 1:
+                if self.opponent in self.first_row[0]:
+                    if self.opponent in self.second_row[2]:
+                        print(0,2)
+                    if self.opponent in self.third_row[1]:
+                        print(2,0)
+                elif self.opponent in self.first_row[2]:
+                    if self.opponent in self.first_column[1]:
+                        print(0,0)
+                    if self.opponent in self.second_column[2]:
+                        print(2,2)
+                elif self.opponent in self.third_row[0]:
+                    if self.opponent in self.second_column[0]:
+                        print(0,0)
+                    if self.opponent in self.third_column[1]:
+                        print(2,2)
+                elif self.opponent in self.third_row[2]:
+                    if self.opponent in self.second_column[0]:
+                        print(0,2)
+                    if self.opponent in self.first_column[1]:
+                        print(2,0)
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+
+    def third_move(self):
+        if self.positions_taken == 4 and self.me in self.first_row[0] and self.me in self.third_row[1] and self.opponent in self.second_row[1]:
+            print (2,0)
+            counter = 1
+        else:
+            return False
+
+    def corner_move(self):
+        if self.corners.count("_") < 4 and self.corners.count("_") > 0:
+            count = 0
+            while count < .05:
+                x = random.choice([0, 2])
+                y = random.choice([0, 2])
+                z = self.game_board[x][y]
+                if z != "X" and z != "O":
+                    print(("{} {}".format(x, y)))
+                    count = 1
+                    counter = 1
+                else:
+                    count = 0
         else:
             return False
 

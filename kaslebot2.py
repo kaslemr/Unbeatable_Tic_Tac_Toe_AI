@@ -1,8 +1,8 @@
 ##USING THIS AS MAIN
 
-#1st python runner.py kaslebot2.py dummybot.py
+#1st python runner.py dummybot.py kaslebot2.py
 
-#2nd python runner.py dummybot.py kaslebot2.py
+#2nd python runner.py kaslebot2.py kaslebot2replica.py
 
 #1st python runner.py kaslebot2.py player
 #2nd python runner.py player kaslebot2.py
@@ -52,7 +52,7 @@ class Bot:
                 counter = 1
             elif self.second_move() != False:
                 counter = 1
-            elif self.corner_move()!= False:
+            elif self.corner_move() != False:
                 counter = 1
             else:
                 x = random.randint(0,2)
@@ -68,6 +68,8 @@ class Bot:
         if self.me not in self.first_row and self.me not in self.second_row and self.me not in self.third_row:
             if self.opponent in self.first_row or self.opponent in self.second_row or self.opponent in self.third_row:
                 if self.opponent in self.corners:
+                    print(1,1)
+                elif self.opponent in self.middles:
                     print(1,1)
                 else:
                     print(0,0)
@@ -93,47 +95,45 @@ class Bot:
                     counter = 1
                 else:
                     counter = 0
-            elif self.middles.count(self.opponent) == 1:
+            elif self.middles.count(self.opponent) == 1 and self.corners.count(self.opponent) == 1:
                 if self.opponent in self.first_row[0]:
                     if self.opponent in self.second_row[2]:
                         print(0,2)
-                    if self.opponent in self.third_row[1]:
+                    elif self.opponent in self.third_row[1]:
                         print(2,0)
+                    else:
+                        return False
                 elif self.opponent in self.first_row[2]:
                     if self.opponent in self.first_column[1]:
-                        print(0,0)
-                    if self.opponent in self.second_column[2]:
+                        if self.me not in self.first_row[0]:
+                            print(0,0)
+                        else:
+                            print (1,1)
+                    elif self.opponent in self.second_column[2]:
                         print(2,2)
+                    else:
+                        return False
                 elif self.opponent in self.third_row[0]:
                     if self.opponent in self.second_column[0]:
-                        print(0,0)
-                    if self.opponent in self.third_column[1]:
+                        if self.me not in self.first_row[0]:
+                            print(0,0)
+                        else:
+                            print(1,1)
+                    elif self.opponent in self.third_column[1]:
                         print(2,2)
+                    else:
+                        return False
                 elif self.opponent in self.third_row[2]:
                     if self.opponent in self.second_column[0]:
                         print(0,2)
-                    if self.opponent in self.first_column[1]:
+                    elif self.opponent in self.first_column[1]:
                         print(2,0)
+                    else:
+                        return False
                 else:
                     return False
             else:
                 return False
-        else:
-            return False
-
-    def corner_move(self):
-        if self.corners.count("_") < 4:
-            count = 0
-            while count < .05:
-                x = random.choice([0, 2])
-                y = random.choice([0, 2])
-                z = self.game_board[x][y]
-                if z != "X" and z != "O":
-                    print(("{} {}".format(x, y)))
-                    count = 1
-                    counter = 1
-                else:
-                    count = 0
         else:
             return False
 
@@ -216,6 +216,23 @@ class Bot:
             print(x, y)
         else:
             return False
+
+    def corner_move(self):
+        if self.corners.count("_") < 4 and self.corners.count("_") > 0:
+            count = 0
+            while count < .05:
+                x = random.choice([0, 2])
+                y = random.choice([0, 2])
+                z = self.game_board[x][y]
+                if z != "X" and z != "O":
+                    print(("{} {}".format(x, y)))
+                    count = 1
+                    counter = 1
+                else:
+                    count = 0
+        else:
+            return False
+
 
 x = Bot()
 x.board()
