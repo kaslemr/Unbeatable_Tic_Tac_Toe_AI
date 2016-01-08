@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Building an Unbeatable Tic Tac Toe Player by kaslemr</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Building an Unbeatable Tic Tac Toe Player</h1>
+      <h2 class="project-tagline">Lessons from my second week learning Python</h2>
+      <a href="https://github.com/kaslemr/tictactoe-bots" class="btn">View on GitHub</a>
+      <a href="https://github.com/kaslemr/tictactoe-bots/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/kaslemr/tictactoe-bots/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <p>In week 2 at the Iron Yard, our instructor, Joel Taddei, gave us a fun weekend challenge - build a Tic Tac Toe player. On Monday, he would pit our Tic Tac Toe "bots" together in hundreds of simulations to determine a champion. Here's how I approached the problem and built an unbeatable bot. I really got to dig deep into control coding and understand how to build complex functions, while having some fun along the way. </p>
+
+<h3>
+<a id="building-a-game-board-and-simulator" class="anchor" href="#building-a-game-board-and-simulator" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building a Game Board and Simulator</h3>
+
+<p>Our instructor provided us a game board and built the code to run simulations while also allowing for an individual to play a bot. This is located in the runner.py file on Github. </p>
+
+<h3>
+<a id="how-to-run-play-or-run-simulations" class="anchor" href="#how-to-run-play-or-run-simulations" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to Run Play or Run Simulations</h3>
+
+<p>After downloading the Github code, run <code>python runner.py first_bot_name.py second_bot_name.py</code> to simulate a game. You can also substitute a .py file for <code>player</code> to play as yourself. The game board will look as such:</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/14279088/12205217/7cf5ceb2-b5f6-11e5-8b41-a6fc0c0d3d12.png"></p>
+
+<p>The first bot or player entered will go first. If you are playing yourself, an example move would be <em>A1</em>. On to the code...</p>
+
+<h3>
+<a id="step-1-creating-a-game-board-for-the-ai-to-read" class="anchor" href="#step-1-creating-a-game-board-for-the-ai-to-read" aria-hidden="true"><span class="octicon octicon-link"></span></a>Step 1: Creating a Game Board for the AI to Read</h3>
+
+<p>The below code establishes a self.me and self.opponent (the first player always has X in the simulations). The first, second, and third row were provided to us by input(), but I manually created columns, diagonals, corners, and middle edge positions for my bot to have more understanding of the board. In my code, I refer to the various tic tac toe spaces as such:</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/14279088/12206019/d8e07556-b5fb-11e5-9853-8d26d34e82ae.png"></p>
+
+<p>By these coordinates, <code>first_row[0]</code> refers to the top left corner, <code>first_row[1]</code> is the middle spot in the first row, and <code>first_row[2]</code> is the top right corner.</p>
+
+<pre><code>class Bot:
+
+  def board(self):
+    self.me = input()
+    if self.me == "X":
+        self.opponent = "O"
+    else:
+        self.opponent = "X" 
+
+    self.first_row = input()
+    self.second_row = input()
+    self.third_row = input()
+    self.first_column = self.create_column(0, 0, 0)
+    self.second_column = self.create_column(1, 1, 1)
+    self.third_column = self.create_column(2, 2, 2)
+    self.left_right_diagonal = self.create_column(0, 1, 2)
+    self.right_left_diagonal = self.create_column(2, 1, 0)
+    self.corners = self.first_row[0], self.first_row[2], self.third_row[0], self.third_row[2]
+    self.positions = [item for sublist in self.game_board for item in sublist]
+    self.positions_taken = self.positions.count("X") + self.positions.count("O")
+    self.middles = self.first_row[1], self.second_row[0], self.second_row[2], self.third_row[1]
+
+    self.game_board = self.create_board(self.first_row, self.second_row, self.third_row)
+
+    return self.game_board
+
+  def create_board(self, first_row, second_row, third_row):
+    return [self.first_row, self.second_row, self.third_row]
+
+  def create_column(self, x, y, z):
+    return [self.first_row[x], self.second_row[y], self.third_row[z]]
+</code></pre>
+
+<h3>
+<a id="overall-strategy" class="anchor" href="#overall-strategy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overall Strategy</h3>
+
+<p>As silly as it sounds, I performed a good deal of research into tic tac toe strategy while playing hundreds of games online. There are many good articles, youtube videos, and even academic research papers into proper strategy. Strategy must be separated into going first and going second. When going first, the goal should always be to take advantage and defeat the opponent. However, the goal when going second against great players should be to simply tie. It is possible to force a tie every time when going second - thus, as long as your opponent also isn't using optimum strategy, at least a few wins going first will give you the overall edge. This defensive strategy worked perfectly for me. </p>
+
+<p>I discovered through a combination of research and trial/error that it is only necessary to hard code the first two moves of a tic tac toe game in order to play optimal strategy. This allowed me to build an unbeatable bot with relatively little code and complexity. I would create the following play hierarchy, each move with it's own function in my bot class:</p>
+
+<ul>
+<li>Check for first move</li>
+<li>Check for second move</li>
+<li>Check for win</li>
+<li>Check for block</li>
+<li>Check for corner move</li>
+<li>Move in random empty square (only occurs when a tie is inevitable)</li>
+</ul>
+
+<h2></h2>
+
+<pre><code>def make_move(self):
+    counter = 0
+    while counter &lt; 0.5:
+        if self.first_move() != False:
+            counter = 1
+        elif self.second_move() != False:
+            counter = 1
+        elif self.get_win() != False:
+            counter = 1
+        elif self.block_win() != False:
+            counter = 1
+        elif self.corner_move() != False:
+            counter = 1
+        else:
+            x = random.randint(0,2)
+            y = random.randint(0,2)
+            z = self.game_board[x][y]
+            if z != "X" and z != "O":
+                print(("{} {}".format(x, y)))
+                counter = 1
+            else:
+                counter = 0
+</code></pre>
+
+<h3>
+<a id="first-move" class="anchor" href="#first-move" aria-hidden="true"><span class="octicon octicon-link"></span></a>First Move</h3>
+
+<p>The strategy is as follows:</p>
+
+<ul>
+<li>If moving first:
+
+<ul>
+<li>Keep it simple, take a corner. This provides for the most win opportunities moving forward in the game.</li>
+</ul>
+</li>
+<li>If moving second:
+
+<ul>
+<li>If the opponent is in a corner -- move middle</li>
+<li>If the opponent is taking a middle edge -- move middle </li>
+<li>Otherwise -- move corner (optimal situation)</li>
+</ul>
+</li>
+</ul>
+
+<h2></h2>
+
+<pre><code>def first_move(self):
+    if self.me not in self.first_row and self.me not in self.second_row and self.me not in self.third_row:
+        if self.opponent in self.first_row or self.opponent in self.second_row or self.opponent in self.third_row:
+            if self.opponent in self.corners:
+                print(1,1)
+            elif self.opponent in self.middles:
+                print(1,1)
+            else:
+                print(0,0)
+        else:
+            print(0,0)
+    else:
+        return False
+</code></pre>
+
+<h3>
+<a id="second-move" class="anchor" href="#second-move" aria-hidden="true"><span class="octicon octicon-link"></span></a>Second Move</h3>
+
+<p>The second move turned out to be the most complicated, because at this point the opponent has established their strategy and you must account for every potential scenario.</p>
+
+<ul>
+<li>If moving first:
+
+<ul>
+<li>If opponent took middle on their first move -- take opposite corner than you previously took to create a diagonal through the middle space. This creates the most opportunities for wins, and you've automatically won if your opponent does not force a block next turn.</li>
+</ul>
+</li>
+</ul>
+
+<p><img src="https://cloud.githubusercontent.com/assets/14279088/12206695/9962cc18-b5ff-11e5-8337-dc78c52d1b15.png"></p>
+
+<ul>
+<li>Otherwise, choose any open corner.
+
+<ul>
+<li>If moving second (i.e. opponent already owns two spaces):</li>
+<li>If opponent has two corners, force a block by taking a middle edge space:</li>
+</ul>
+</li>
+</ul>
+
+<p><img src="https://cloud.githubusercontent.com/assets/14279088/12206913/e2896ab8-b600-11e5-9ad5-6bae5c81107e.png"></p>
+
+<ul>
+<li>If opponent has a corner and a middle edge, then you must account for every potential combination. Don't worry, this is the last specific move that you'll need to hard code or remember for the rest of the game. First, you want to choose the square giving you a potential winning diagonal. Since there are two of these squares, you want the square <em>next to</em> to the opponent's middle edge, or in the middle of their "L" shape. This takes away their win strategy while forcing their hand to block next turn.</li>
+</ul>
+
+<ul>
+<li>In all other scenarios, take any empty corner.</li>
+</ul>
+
+<h2></h2>
+
+<pre><code>def second_move(self):
+    if self.positions_taken == 2:
+        if self.second_row[1] == self.opponent:
+            print(2,2)
+            counter = 1
+        else:
+            return False
+    elif self.positions_taken == 3:
+        if self.corners.count(self.opponent) == 2:
+            x = 1
+            y = random.choice([0, 2])
+            z = self.game_board[x][y]
+            if z != "X" and z != "O":
+                print(("{} {}".format(x, y)))
+                counter = 1
+            else:
+                counter = 0
+        elif self.middles.count(self.opponent) == 1 and self.corners.count(self.opponent) == 1:
+            if self.opponent in self.first_row[0]:
+                if self.opponent in self.second_row[2]:
+                    print(0,2)
+                elif self.opponent in self.third_row[1]:
+                    print(2,0)
+                else:
+                    return False
+            elif self.opponent in self.first_row[2]:
+                if self.opponent in self.first_column[1]:
+                    if self.me not in self.first_row[0]:
+                        print(0,0)
+                    else:
+                        print (1,1)
+                elif self.opponent in self.second_column[2]:
+                    print(2,2)
+                else:
+                    return False
+            elif self.opponent in self.third_row[0]:
+                if self.opponent in self.second_column[0]:
+                    if self.me not in self.first_row[0]:
+                        print(0,0)
+                    else:
+                        print(1,1)
+                elif self.opponent in self.third_column[1]:
+                    print(2,2)
+                else:
+                    return False
+            elif self.opponent in self.third_row[2]:
+                if self.opponent in self.second_column[0]:
+                    print(0,2)
+                elif self.opponent in self.first_column[1]:
+                    print(2,0)
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+    else:
+        return False
+</code></pre>
+
+<p>From here on out it's easy! 1) Check for any wins, 2) make sure to block any opponent wins, 3) Keep taking empty corners (in this order). You've guaranteed a win or a draw.</p>
+
+<pre><code>def get_win(self):
+    if self.first_row.count(self.me) == 2 and self.first_row.count("_") == 1:
+        y = self.first_row.index("_")
+        print(0, y)
+    elif self.second_row.count(self.me) == 2 and self.second_row.count("_") == 1:
+        y = self.second_row.index("_")
+        print(1, y)
+    elif self.third_row.count(self.me) == 2 and self.third_row.count("_") == 1:
+        y = self.third_row.index("_")
+        print(2, y)
+    elif self.first_column.count(self.me) == 2 and self.first_column.count("_") == 1:
+        x = self.first_column.index("_")
+        print(x, 0)
+    elif self.second_column.count(self.me) == 2 and self.second_column.count("_") == 1:
+        x = self.second_column.index("_")
+        print(x, 1)
+    elif self.third_column.count(self.me) == 2 and self.third_column.count("_") == 1:
+        x = self.third_column.index("_")
+        print(x, 2)
+    elif self.left_right_diagonal.count(self.me) == 2 and self.left_right_diagonal.count("_") == 1:
+        x = self.left_right_diagonal.index("_")
+        if x == 0:
+            y = 0
+        if x == 1:
+            y = 1
+        if x == 2:
+            y = 2
+        print(x, y)
+    elif self.right_left_diagonal.count(self.opponent) == 2 and self.right_left_diagonal.count("_") == 1:
+        x = self.right_left_diagonal.index("_")
+        if x == 0:
+            y = 2
+        if x == 1:
+            y = 1
+        if x == 2:
+            y = 0
+        print(x, y)
+    else:
+        return False
+
+def block_win(self):
+    if self.first_row.count(self.opponent) == 2 and self.first_row.count("_") == 1:
+        y = self.first_row.index("_")
+        print(0, y)
+    elif self.second_row.count(self.opponent) == 2 and self.second_row.count('_') == 1:
+        y = self.second_row.index("_")
+        print(1, y)
+    elif self.third_row.count(self.opponent) == 2 and self.third_row.count("_") == 1:
+        y = self.third_row.index("_")
+        print(2, y)
+    elif self.first_column.count(self.opponent) == 2 and self.first_column.count("_") == 1:
+        x = self.first_column.index("_")
+        print(x, 0)
+    elif self.second_column.count(self.opponent) == 2 and self.second_column.count("_") == 1:
+        x = self.second_column.index("_")
+        print(x, 1)
+    elif self.third_column.count(self.opponent) == 2 and self.third_column.count("_") == 1:
+        x = self.third_column.index("_")
+        print(x, 2)
+    elif self.left_right_diagonal.count(self.opponent) == 2 and self.left_right_diagonal.count("_") == 1:
+        x = self.left_right_diagonal.index("_")
+        if x == 0:
+            y = 0
+        if x == 1:
+            y = 1
+        if x == 2:
+            y = 2
+        print(x, y)
+    elif self.right_left_diagonal.count(self.opponent) == 2 and self.right_left_diagonal.count("_") == 1:
+        x = self.right_left_diagonal.index("_")
+        if x == 0:
+            y = 2
+        if x == 1:
+            y = 1
+        if x == 2:
+            y = 0
+        print(x, y)
+    else:
+        return False
+
+def corner_move(self):
+    if self.corners.count("_") &lt; 4 and self.corners.count("_") &gt; 0:
+        count = 0
+        while count &lt; .05:
+            x = random.choice([0, 2])
+            y = random.choice([0, 2])
+            z = self.game_board[x][y]
+            if z != "X" and z != "O":
+                print(("{} {}".format(x, y)))
+                count = 1
+                counter = 1
+            else:
+                count = 0
+    else:
+        return False
+</code></pre>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/kaslemr/tictactoe-bots">Building an Unbeatable Tic Tac Toe Player</a> is maintained by <a href="https://github.com/kaslemr">kaslemr</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
